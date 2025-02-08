@@ -2,6 +2,9 @@ const express = require('express');
 const res = require("express/lib/response");
 const console = require("node:console");
 const mongoose = require("mongoose");
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 require("dotenv").config();
 
 // import routes
@@ -9,6 +12,11 @@ const userRoutes = require("./routes/users");
 
 // app
 const app = express();
+
+// middlewares
+app.use(morgan("dev"));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
 // routes middleware
 app.use('/api', userRoutes);
