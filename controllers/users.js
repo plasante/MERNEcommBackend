@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken'); // to generate a signed token
 const expressJwt = require('express-jwt'); // for authorization check
 const {errorHandler} = require('../helpers/DbErrorHandler');
 const res = require("express/lib/response");
+const process = require("node:process");
 
 exports.sayHi = (req, res) => {
   res.json({message: 'Hello Json!'});
@@ -28,6 +29,12 @@ exports.signout = async (req, res) => {
     return res.status(400).json({ error: 'Signout failed' });
   }
 }
+
+exports.requireSignin = expressJwt.expressjwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ['HS256'], // Vous devez aussi spécifier les algorithmes utilisés
+  userProperty: 'auth'
+});
 
 exports.signin = async (req, res) => {
   const signinEmail = req.body.email;
