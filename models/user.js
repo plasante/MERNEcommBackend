@@ -49,16 +49,21 @@ userSchema.virtual('password')
   });
 
 userSchema.methods = {
+  authenticate: function(plainText) {
+    return this.encryptPassword(plainText) === this.hashedPassword;
+  },
+
   encryptPassword: function(password) {
-    if(!password) return '';
+    if (!password) return "";
     try {
-      return crypto.createHmac('sha1', this.salt)
+      return crypto
+        .createHmac("sha1", this.salt)
         .update(password)
-        .digest('hex');
-    } catch(err) {
-      return '';
+        .digest("hex");
+    } catch (err) {
+      return "";
     }
   }
-}
+};
 
 module.exports = mongoose.model("User", userSchema);
