@@ -2,6 +2,7 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken'); // to generate a signed token
 const expressJwt = require('express-jwt'); // for authorization check
 const {errorHandler} = require('../helpers/DbErrorHandler');
+const res = require("express/lib/response");
 
 exports.sayHi = (req, res) => {
   res.json({message: 'Hello Json!'});
@@ -18,6 +19,15 @@ exports.signUp = async (req, res) => {
     return res.status(400).json({ err: errorHandler(err) });
   }
 };
+
+exports.signout = async (req, res) => {
+  try {
+    res.clearCookie('t');
+    res.json({ message: 'Signout Success' });
+  } catch (err) {
+    return res.status(400).json({ error: 'Signout failed' });
+  }
+}
 
 exports.signin = async (req, res) => {
   const signinEmail = req.body.email;
@@ -46,7 +56,7 @@ exports.signin = async (req, res) => {
     return res.json({ token, user: { _id, email, name, role } });
 
   } catch (err) {
-    console.error(err);
+    //console.error(err);
     return res.status(400).json({ error: 'Authentication failed' });
   }
 }
