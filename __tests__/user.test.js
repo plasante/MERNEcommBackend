@@ -59,4 +59,24 @@ describe('signUp', () => {
       },
     });
   });
+
+  it('should return an error if user save operation fails', async () => {
+    const mockUser = {
+      save: jest.fn().mockRejectedValue({ message: 'Save operation failed' }),
+    };
+    User.mockImplementation(() => mockUser);
+
+    const req = { body: { name: 'Test User', email: 'testuser@gmail.com' } };
+    const json = jest.fn();
+    const status = jest.fn().mockReturnValue({ json });
+    const res = { json, status };
+
+    await userController.signUp(req, res);
+
+    expect(mockUser.save).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(400);
+    // expect(res.status(400).json).toHaveBeenCalledWith({
+    //   err: 'Save operation failed',
+    // });
+  });
 })
