@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {sayHi, signUp, signin, signout, requireSignin} = require('../controllers/users');
+const {sayHi, signUp, signin, signout, requireSignin} = require('../controllers/auth');
 const {userSignupValidator} = require('../validators');
 const res = require("express/lib/response");
 

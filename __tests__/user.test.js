@@ -1,6 +1,6 @@
 jest.mock('../models/user');
 const User = require('../models/user');
-const userController = require('../controllers/users');
+const userController = require('../controllers/auth');
 
 // Test pour 'sayHi'
 test('sayHi', () => {
