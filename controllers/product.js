@@ -4,6 +4,28 @@ const Product = require('../models/product');
 const fs = require('fs');
 const {errorHandler} = require('../helpers/DbErrorHandler');
 
+exports.productById = async (req, res, next, id) => {
+    try {
+      const product = await Product.findById(id);
+      if (!product) {
+        return res.status(400).json({
+          error: "Product not found"
+        });
+      }
+      req.product = product;
+      next();
+    } catch (err) {
+      return res.status(400).json({
+        error: "Product not found"
+      });
+    }
+}
+
+exports.read = async (req, res, next) => {
+  req.product.photo = undefined;
+  return res.json(req.product);
+}
+
 exports.create = async (req, res) => {
   const form = new formidable.IncomingForm();
   form.keepExtensions = true;
