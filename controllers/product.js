@@ -2,7 +2,7 @@ const formidable = require("formidable");
 const _ = require("lodash");
 const Product = require('../models/product');
 const fs = require('fs');
-const {errorHandler} = require('../helpers/DbErrorHandler');
+const {errorHandler} = require("../helpers/DbErrorHandler");
 
 exports.productById = async (req, res, next, id) => {
     try {
@@ -20,6 +20,26 @@ exports.productById = async (req, res, next, id) => {
       });
     }
 }
+
+exports.remove = async (req, res) => {
+  const product = req.product;
+
+  if (!product) {
+    return res.status(400).json({
+      error: "Product not found",
+    });
+  }
+
+  try {
+    // Use the Model's deleteOne method
+    await Product.deleteOne({ _id: product._id });
+    return res.json({ message: "Product deleted successfully" });
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler(err),
+    });
+  }
+};
 
 exports.read = async (req, res, next) => {
   req.product.photo = undefined;
