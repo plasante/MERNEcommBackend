@@ -8,7 +8,7 @@ exports.create = async (req, res) => {
   const form = new formidable.IncomingForm();
   form.keepExtensions = true;
   await form.parse(req, async (err, fields, files) => {
-    console.log('files = ', files)
+    //console.log('files = ', files)
     if (err) {
       return res.status(400).json({
         error: "Image could not be uploaded"
@@ -32,7 +32,7 @@ exports.create = async (req, res) => {
     }
 
     // Log newProduct to check if photo data is there
-    console.log(newProduct);
+    //console.log(newProduct);
 
     try {
       // Save the product and wait for result
@@ -40,12 +40,12 @@ exports.create = async (req, res) => {
 
       // Find the product and log it
       const foundProduct = await Product.findById(product._id);
-      console.log('Saved product', foundProduct);
+      //console.log('Saved product', foundProduct);
 
       // Return the product's JSON
       res.json({product});
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return res.status(400).json({
         error: errorHandler(err)
       });
