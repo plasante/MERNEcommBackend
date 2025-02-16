@@ -2,31 +2,53 @@ const formidable = require("formidable");
 const _ = require("lodash");
 const Product = require('../models/product');
 const fs = require('fs');
-const { errorHandler } = require('../helpers/DbErrorHandler');
+const {errorHandler} = require('../helpers/DbErrorHandler');
 
 exports.create = async (req, res) => {
   const form = new formidable.IncomingForm();
   form.keepExtensions = true;
-  form.parse(req, (err, fields, files) => {
+  await form.parse(req, async (err, fields, files) => {
+    console.log('files = ', files)
     if (err) {
       return res.status(400).json({
         error: "Image could not be uploaded"
       });
     }
-    const newProduct = new Product(fields);
 
-    if (files.photo) {
-      newProduct.photo.data = fs.readFileSync(files.photo.path);
-      newProduct.photo.contenType = files.photo.type;
+    // Process all other form fields, ensuring no empty arrays stay
+    for (let key in fields) {
+      if (Array.isArray(fields[key])) {
+        fields[key] = fields[key][0];
+      }
     }
 
+    // Create a new product with the fields
+    const newProduct = new Product(fields);
+
+    // If a file was uploaded and there's a file path, read the file into the product
+    if (files.photo && files.photo[0].filepath) {
+      newProduct.photo.data = fs.readFileSync(files.photo[0].filepath);
+      newProduct.photo.contentType = files.photo[0].type;
+    }
+
+    // Log newProduct to check if photo data is there
+    console.log(newProduct);
+
     try {
-      const product = newProduct.save();
-      res.json({ product });
+      // Save the product and wait for result
+      const product = await newProduct.save();
+
+      // Find the product and log it
+      const foundProduct = await Product.findById(product._id);
+      console.log('Saved product', foundProduct);
+
+      // Return the product's JSON
+      res.json({product});
     } catch (err) {
+      console.log(err);
       return res.status(400).json({
         error: errorHandler(err)
       });
-    };
+    }
   });
-}
+};
