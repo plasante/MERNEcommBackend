@@ -22,11 +22,28 @@ exports.create = async (req, res) => {
       }
     }
 
+    if (!files.photo) {
+      return res.status(400).json({
+        error: "Image is required"
+      });
+    }
+
+    if (!fields.name || !fields.description || !fields.price || !fields.category || !fields.quantity || !fields.shipping) {
+      return res.status(400).json({
+        error: "All fields are required"
+      });
+    }
+
     // Create a new product with the fields
     const newProduct = new Product(fields);
 
     // If a file was uploaded and there's a file path, read the file into the product
     if (files.photo && files.photo[0].filepath) {
+      if (files.photo[0].size > 1000000) {
+        return res.status(400).json({
+          error: "Image size should be less than 1MB"
+        })
+      }
       newProduct.photo.data = fs.readFileSync(files.photo[0].filepath);
       newProduct.photo.contentType = files.photo[0].type;
     }
