@@ -206,3 +206,22 @@ exports.list = async (req, res) => {
     });
   }
 }
+
+/**
+ * It will find the products based on the req product category
+ * other products that have the same category will be returned.
+ */
+exports.listRelated = async (req, res) => {
+  try {
+    let limit = req.query.limit ? req.query.limit : 6;
+    console.log('testing nodemon by Pierre')
+    const relatedProducts = await Product.find({ _id: { $ne: req.product }, category: req.product.category })
+          .limit(parseInt(limit))
+          .populate('category', '_id name');
+    res.json(relatedProducts);
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler(err)
+    });
+  }
+}

@@ -5,8 +5,16 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
-const expressValidator = require("express-validator");
+//const expressValidator = require("express-validator");
 require("dotenv").config();
+
+// Disable require cache in development environment if faced with issues
+if (process.env.NODE_ENV !== 'production') {
+  // This recompiles changes in routes or anything else you require below when file changes
+  const requireReload  =  require('require-reload')(require);
+  const routes = requireReload('./routes/product');
+  // any other require statements...
+}
 
 // import routes
 const authRoutes = require("./routes/auth");
@@ -21,7 +29,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(expressValidator());
+//app.use(expressValidator());
 
 // routes middleware
 app.use('/api', authRoutes);
