@@ -179,3 +179,30 @@ exports.update = async (req, res) => {
     }
   });
 };
+
+/**
+ * sell / arrival
+ * We need to show the most popular products as well as the new products
+ * by sell = /products?sortBy=sold&order=desc&limit=4
+ * by arrival = /products?sortBy=createdAt&order=desc&limit=4
+ * If no params are sent, then all products are returned
+ */
+
+exports.list = async (req, res) => {
+  try {
+    let order = req.query.order ? req.query.order : 'asc';
+    let sortBy = req.query.sortBy ? req.query.sortBy : '_id';
+    let limit = req.query.limit ? req.query.limit : 6;
+    const products = await Product.find()
+          .select("-photo")
+          .populate("category")
+          .sort([[sortBy, order]])
+          .limit(parseInt(limit));
+        res.json(products);
+
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler(err)
+    });
+  }
+}
