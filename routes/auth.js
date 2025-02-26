@@ -6,7 +6,8 @@ const {userSignupValidator} = require('../validators');
 const res = require("express/lib/response");
 
 router.get('/', sayHi);
-router.post('/signup', userSignupValidator, signUp);
+//router.post('/signup', userSignupValidator, signUp);
+router.post('/signup', signUp);
 router.post('/signin', signin);
 router.get('/signout', signout);
 
