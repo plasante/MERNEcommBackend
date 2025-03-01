@@ -2,22 +2,28 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken'); // to generate a signed token
 const expressJwt = require('express-jwt'); // for authorization check
 const {errorHandler} = require('../helpers/DbErrorHandler');
-const res = require("express/lib/response");
+require("express/lib/response");
 const process = require("node:process");
+const { validationResult } = require('express-validator');
 
 exports.sayHi = (req, res) => {
   res.json({message: 'Hello Json!'});
 }
 
 exports.signUp = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const firstError = errors.array().map(error => error.msg)[0]
+    return res.status(400).json({ error: firstError });
+  }
   const user = new User(req.body);
   try {
     const savedUser = await user.save();
     savedUser.salt = undefined;
     savedUser.hashedPassword = undefined;
-    res.json({ savedUser });
+    res.status(200).json({ savedUser });
   } catch (err) {
-    return res.status(400).json({ err: errorHandler(err) });
+    return res.status(400).json({ error: errorHandler(err) });
   }
 };
 
