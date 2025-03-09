@@ -99,10 +99,9 @@ exports.create = async (req, res) => {
 
       // Find the product and log it
       const foundProduct = await Product.findById(product._id);
-      //console.log('Saved product', foundProduct);
 
-      // Return the product's JSON
-      res.json({product});
+      // Return the product's JSON. It will be accessible as data.name etc...
+      res.json(product);
     } catch (err) {
       //console.log(err);
       return res.status(400).json({
