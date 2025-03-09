@@ -101,7 +101,7 @@ exports.create = async (req, res) => {
       const foundProduct = await Product.findById(product._id);
 
       // Return the product's JSON. It will be accessible as data.name etc...
-      res.json(product);
+      res.json({product});
     } catch (err) {
       //console.log(err);
       return res.status(400).json({
